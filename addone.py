@@ -36,7 +36,7 @@ model1 = Model(name="8 Series Coupe",
                new BMW 8 Series Coupe combines the character of a sports car
                with the spirit of the BMW luxury class, creating a new form of
                aesthetics.''',
-               price="$25000", brand_id=brand1.id)
+               price="25000", brand_id=brand1.id,manager_id=1)
 session.add(model1)
 session.commit()
 
@@ -47,7 +47,7 @@ model2 = Model(name="X5 Series",
                double kidney gives you an idea of what happens when it takes
                a deep breath. And the heightened X design of the headlights
                leaves no doubt about who is in the driving seat.''',
-               price="$24000", brand_id=brand1.id)
+               price="24000", brand_id=brand1.id,manager_id=1)
 session.add(model2)
 session.commit()
 
@@ -56,7 +56,7 @@ model3 = Model(name="3 Series Sedan", description='''The original since 1975:
                sixth generation, this irresistible combination of dynamic
                design, unrivalled agility and intelligent ConnectedDrive
                features is as impressive as ever.''',
-               price="$250000", brand_id=brand1.id)
+               price="250000", brand_id=brand1.id, manager_id=1)
 session.add(model3)
 session.commit()
 

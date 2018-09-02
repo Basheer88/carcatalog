@@ -1,0 +1,36 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="row">
+	<div>
+		<h1>{{ item.name }}
+		<figure class="creator">
+			<img src="{{ creator.picture }}">
+			<figcaption>{{ creator.name }}</figcaption>
+		</figure>
+		</h1>
+	</div>
+</div>
+
+<div class = 'flash'>
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}  
+    		<ul>
+    		{% for message in messages %}
+    			<li> <strong> {{ message }} </strong> </li>
+    		{% endfor %}
+    		</ul>
+    	{% endif %}
+    {% endwith %}
+</div>
+
+<div class="menu-item">
+	<h3>{{item.name}}</h3>
+	<p>{{item.description}}</p>
+	<p class="menu-price">$ {{item.price}}</p>
+	<a href='{{url_for('editModel', brand_id = item.brand_id, model_id=item.id ) }}'>Edit</a> | 
+	<a href='{{url_for('deleteModel', brand_id = item.brand_id, model_id=item.id ) }}'>Delete</a>
+</div>
+
+{% endblock %}

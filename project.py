@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Manager, Brand, Model
 from flask import session as login_session
@@ -280,15 +280,16 @@ def brandsJSON():
     return jsonify(brands=[r.serialize for r in brands])
 
 
-# Show all brands
+# Show all brands and models
 @app.route('/')
 @app.route('/brand/')
 def showBrands():
     brands = session.query(Brand).order_by(asc(Brand.name))
+    models = session.query(Model).order_by(desc(Model.id))
     if 'username' not in login_session:
-        return render_template('publicbrands.html', brands=brands)
+        return render_template('publicbrands.html', brands=brands, models=models)
     else:
-        return render_template('brands.html', brands=brands)
+        return render_template('brands.html', brands=brands, models=models)
 
 
 # Create a new Brand
@@ -311,6 +312,7 @@ def newBrand():
 @app.route('/brand/<int:brand_id>/edit/', methods=['GET', 'POST'])
 def editBrand(brand_id):
     editedBrand = session.query(Brand).filter_by(id=brand_id).one()
+    creator = getManagerInfo(editedBrand.manager_id)
     if 'username' not in login_session:
         return redirect('/login')
     if editedBrand.manager_id != login_session['user_id']:
@@ -321,7 +323,7 @@ def editBrand(brand_id):
             flash('Brand Successfully Edited %s' % editedBrand.name)
             return redirect(url_for('showBrands'))
     else:
-        return render_template('editBrand.html', brand=editedBrand)
+        return render_template('editBrand.html', brand=editedBrand, creator=creator)
 
 
 # Delete a brand
@@ -336,10 +338,21 @@ def deleteBrand(brand_id):
         session.delete(brandToDelete)
         flash('%s Successfully Deleted' % brandToDelete.name)
         session.commit()
-        return redirect(url_for('showBrandss', brand_id=brand_id))
+        return redirect(url_for('showBrands', brand_id=brand_id))
     else:
         return render_template('deleteBrand.html', brand=brandToDelete)
 
+
+# Show specific model
+@app.route('/model/<int:model_id>/')
+def sModel(model_id):
+    items = session.query(Model).filter_by(id=model_id).one()
+    creator = getManagerInfo(items.manager_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicspecificModel.html', item = items)
+    else:
+        return render_template('specificModel.html', item = items, creator=creator)
+    
 
 # Show a model
 @app.route('/brand/<int:brand_id>/')
@@ -360,6 +373,7 @@ def newModel(brand_id):
     if 'username' not in login_session:
         return redirect('/login')
     brand = session.query(Brand).filter_by(id=brand_id).one()
+    creator = getManagerInfo(brand.manager_id)
     if login_session['user_id'] != brand.manager_id:
         return "<script>function myFunction() {alert('You are not authorized to add menu items to this restaurant. Please create your own restaurant in order to add items.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
@@ -371,7 +385,7 @@ def newModel(brand_id):
         session.commit()
         flash('New Model %s Item Successfully Created' % (newItem.name))
         return redirect(url_for('showModel', brand_id=brand_id))
-    return render_template('newmodel.html', brand_id=brand_id)
+    return render_template('newmodel.html', brand_id=brand_id, creator=creator)
 
 
 # Edit a model
@@ -381,6 +395,7 @@ def editModel(brand_id, model_id):
         return redirect('/login')
     editedItem = session.query(Model).filter_by(id=model_id).one()
     brand = session.query(Brand).filter_by(id=brand_id).one()
+    creator = getManagerInfo(brand.manager_id)
     if login_session['user_id'] != brand.manager_id:
         return "<script>function myFunction() {alert('You are not authorized to edit menu items to this restaurant. Please create your own restaurant in order to edit items.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
@@ -395,7 +410,7 @@ def editModel(brand_id, model_id):
         flash('Model Successfully Edited')
         return redirect(url_for('showModel', brand_id=brand_id))
     else:
-        return render_template('editmodel.html', brand_id=brand_id, model_id=model_id, item=editedItem)
+        return render_template('editmodel.html', brand_id=brand_id, model_id=model_id, item=editedItem, creator=creator)
 
 
 # Delete model

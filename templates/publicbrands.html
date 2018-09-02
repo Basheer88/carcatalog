@@ -1,20 +1,16 @@
 {% extends "main.html" %}
 {% block content %}
-	<div class="row top-menu">
-		<div class="col-md-10"></div>
-		<div class="col-md-2 text-right">
+	<div class="top">
+		<dir class="left">Car Catalog App</dir>
+		<div class="right">
 			<a href="{{url_for('showLogin')}}">Click Here to Log in </a>
 		</div>
 	</div>
-	<div class="row divider blue">
-		<div class="col-md-12"></div>
+
+	<div>
+		<img src ="/static/top-banner.jpg" class = "carImage">
 	</div>
-	<div class="row banner main">
-		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
-			<h1>Brands</h1>
-		</div>
-	</div>
+
 
 	<div class = 'flash'>
 		{% with messages = get_flashed_messages() %}
@@ -27,21 +23,27 @@
         {% endif %}
         {% endwith %}
 	</div>
-	
-	<div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-10 padding-none"></div>
-		<div class="col-md-1"></div>
-	</div>
-	{% for brand in brands %}
-		<a href = "{{url_for('showModel', brand_id = brand.id)}}">
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 brand-list">
+
+	<div class = "menu">
+		<div class="brandMenu">
+			<h2>Brand</h2>
+			{% for brand in brands %}
+				<div class = "link">
+					<a href = "{{url_for('showModel', brand_id = brand.id)}}">
 						<h3>{{brand.name}}</h3>
-					</div>
-				<div class="col-md-1"></div>
-			</div>
-		</a>
-	{% endfor %}
+					</a>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="modelMenu">
+			<h2>Latest Added Model</h2>
+			{% for model in models %}
+				<div class = "link">
+					<a href = "{{url_for('sModel', model_id = model.id)}}">
+						<h3>{{model.name}}</h3>
+					</a>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endblock %}

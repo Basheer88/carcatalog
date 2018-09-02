@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div>
+	<img src ="/static/top-banner.jpg" class = "carImage">
+</div>
+
+
+<div class="menu-item">
+	<h3>{{item.name}}</h3>
+	<p>{{item.description}}</p>
+	<p class="menu-price">$ {{item.price}}</p>
+</div>
+
+{% endblock %}
